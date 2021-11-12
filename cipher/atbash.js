@@ -28,7 +28,7 @@ const functionAtbashCipher = (message, cipher)=>{
 
     const cipherText = receiveСipherOrDecodeText(originalArray,allIndexLowRegister,allIndexLowerRegister,atbashCipherLowRegister,atbashCipherLowerRegister);
     const cipherArray = TextInArray(cipherText);
-    const decodeText = receiveСipherOrDecodeText(cipherArray,allIndexLowRegister,allIndexLowerRegister,arr_en,arr_EN)
+    const decodeText = receiveСipherOrDecodeText(originalArray,allIndexLowRegister,allIndexLowerRegister,atbashCipherLowRegister,atbashCipherLowerRegister)
 
     // console.log(cipherText)
     // console.log(decodeText)

@@ -1,12 +1,20 @@
 const fs = require('fs');
 const { Transform } = require('stream');
 const {pipeline} = require ('stream')
+const process = require('process');
 
-const readStream = fs.createReadStream('./docs/text.txt');
-const writeStream = fs.createWriteStream('./docs/new-text.txt');
+//declaration variables
+let configArr
+let inputFile
+let outputFile
+let transformStream = []
+let readStream
+let writeStream
+
 const functionCaesarCipher = require('./cipher/caesar')
 const functionAtbashCipher = require ('./cipher/atbash')
 const functionRot8Cipher = require ('./cipher/rot-8')
+
 
 
 
@@ -35,34 +43,17 @@ const functionRot8Cipher = require ('./cipher/rot-8')
 
 //Рабочая
 //Cipher
-class TextTransformWithCaesarCipher extends Transform {
-    _transform(chunk, encoding, callback) {
-        try {
-             const message = functionCaesarCipher(chunk.toString(),'cipher')
-            // this.push(resultString)
-            callback(null, message);
-        } catch (err) {
-            callback(err);
-        }
+class TextTransformCipher extends Transform {
+    constructor(method) {
+        super()
+        this.method = method;
     }
-}
-class TextTransformWithAtbashCipher extends Transform {
     _transform(chunk, encoding, callback) {
         try {
-             const message = functionAtbashCipher(chunk.toString(),'cipher')
+            const message = this.method(chunk.toString(),'cipher')
             // this.push(resultString)
             callback(null, message);
-        } catch (err) {
-            callback(err);
-        }
-    }
-}
-class TextTransformWithRot8Cipher extends Transform {
-    _transform(chunk, encoding, callback) {
-        try {
-             const message = functionRot8Cipher(chunk.toString(),'cipher')
-            // this.push(resultString)
-            callback(null, message);
+            // console.log('TextTransformCipher')
         } catch (err) {
             callback(err);
         }
@@ -70,114 +61,150 @@ class TextTransformWithRot8Cipher extends Transform {
 }
 
 //decode
-class TextTransformWithDecodeRot8 extends Transform {
-    _transform(chunk, encoding, callback) {
-        try {
-             const message = functionRot8Cipher(chunk.toString())
-            // this.push(resultString)
-            callback(null, message);
-        } catch (err) {
-            callback(err);
-        }
+class TextTransformDecode extends Transform {
+    constructor(method) {
+        super()
+        this.method = method;
     }
-}
-class TextTransformWithDecodeAtbash extends Transform {
+
     _transform(chunk, encoding, callback) {
         try {
-             const message = functionAtbashCipher(chunk.toString())
+             //const message = functionCaesarCipher(chunk.toString())
+            const message = this.method(chunk.toString())
             // this.push(resultString)
             callback(null, message);
-        } catch (err) {
-            callback(err);
-        }
-    }
-}
-class TextTransformWithDecodeCaesar extends Transform {
-    _transform(chunk, encoding, callback) {
-        try {
-             const message = functionCaesarCipher(chunk.toString())
-            // this.push(resultString)
-            callback(null, message);
+            // console.log('TextTransformDecode')
         } catch (err) {
             callback(err);
         }
     }
 }
 
-const textTransformCaesarCipher = new TextTransformWithCaesarCipher();
-const textTransformAtbashCipher = new TextTransformWithAtbashCipher();
-const textTransformRot8Cipher = new TextTransformWithRot8Cipher();
-
-const textDecodeRot8 = new TextTransformWithDecodeRot8()
-const textDecodeAtbash = new TextTransformWithDecodeAtbash()
-const textDecodeCaesar = new TextTransformWithDecodeCaesar()
-
-const someCipher = (textTransformCipher)=>{
+const pipelineFunction = (transformStream)=>{
     pipeline(
         readStream,
-        textTransformCipher,
+        // process.stderr.on('error', ()=>console.log('Please provide the correct path to the input file')),
+        ...transformStream,
         writeStream,
+        // process.stderr.on('error', ()=>console.log('Please provide the correct path to the output file')),
         (error) => {
-            if (error) {
-            } else {
-                console.log('finished cipher')
+            if (error){
+
+            }else{
+                // transformStream = []
+                console.log(transformStream.length)
+                console.log('finished')
             }
         }
     )
 }
-const someDecode = (textTransformDecode)=>{
+const pipelineWithoutParametrs = (transformStream)=>{
     pipeline(
-        readStream,
-        textTransformDecode,
-        writeStream,
+        process.stdin,
+        // process.stderr.on('error', ()=>console.log('err')),
+        ...transformStream,
+        process.stdout,
+        // process.stderr.on('error', ()=>console.log('err')),
         (error) => {
-            if (error) {
-            } else {
-                console.log('finished decode')
+            if (error){
+
+            }else{
+                console.log('finished process stdout')
             }
         }
     )
 }
 
-let configArr
 const input = process.argv
 console.log(input)
-if(input.findIndex( el=> el==='-c' )){
-    const index = input.findIndex( el=> el==='-c' )
+if(input.findIndex( el=> el==='-c' | el === '--config' )){
+    const index = input.findIndex( el=> el==='-c' | el === '--config' )
     const config = input[index+1]
-
     configArr = config.split('-')
 }
+
+if(input.findIndex( el=> el==='-i' | el === '--input')){
+    const indexInput = input.findIndex( el=> el==='-i' | el === '--input' )
+    if(indexInput !==-1) inputFile = input[indexInput+1]
+    else inputFile = null
+
+}
+if(input.findIndex( el=> el==='-o' | el === '--output')){
+    const indexOutput = input.findIndex( el=> el==='-o' | el === '--output' )
+    if(indexOutput !==-1) outputFile = input[indexOutput+1]
+    else outputFile = null
+
+}
+
+
+//--------------------------------//
+if (input.filter(el=>el === '-c' | el === '--config').length>1){
+    process.exit(1)
+}
+if (input.filter(el=>el === '-i' | el === '--input').length>1){
+    process.exit(1)
+}
+if (input.filter(el=>el === '-o' | el === '--output').length>1){
+    process.exit(1)
+}
+//---------------------------------------//
+
+
+console.log(inputFile)
+console.log(outputFile)
 
 configArr.map(el=>{
     switch (el){
         case 'C1':{
-            someCipher(textTransformCaesarCipher)
+            transformStream.push(new TextTransformCipher(functionCaesarCipher))
             break;
         }
         case 'C0':{
-            someDecode(textDecodeCaesar)
+            transformStream.push(new TextTransformDecode(functionCaesarCipher))
             break;
         }
-        case 'A1':{
-            someCipher(textTransformAtbashCipher)
-            break;
-        }
-        case 'A0':{
-            someDecode(textDecodeAtbash)
+        case 'A':{
+            transformStream.push(new TextTransformCipher(functionAtbashCipher))
             break;
         }
         case 'R1':{
-            someCipher(textTransformRot8Cipher)
+            transformStream.push(new TextTransformCipher(functionRot8Cipher))
             break;
         }
         case 'R0':{
-            someDecode(textDecodeRot8)
+            transformStream.push(new TextTransformDecode(functionRot8Cipher))
             break;
         }
-        default:
-            return undefined
+        default:{
+            console.log('Please, enter correct config')
+            return process.exit(1)
+        }
+
     }
 })
+
+if (!inputFile && !outputFile) pipelineWithoutParametrs(transformStream)
+else {
+    fs.stat(inputFile.toString(), (err, stats) => {
+        if (err) {
+            console.log('Please provide the correct path to the input file')
+            process.stderr
+        }else{
+            readStream = fs.createReadStream(inputFile.toString());
+        }
+    })
+    fs.stat(outputFile.toString(), (err, stats) => {
+        if (err) {
+            console.log('Please provide the correct path to the output file')
+            process.stderr
+        }else{
+            writeStream = fs.createWriteStream(outputFile.toString());
+            pipelineFunction(transformStream)
+        }
+    })
+
+
+}
+
 
 

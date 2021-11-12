@@ -24,17 +24,25 @@ const functionCaesarCipher = (message, cipher)=>{
     const caesarCipher = (array)=>{
         return [...array].map((_,i,a)=>{
             if (!a[i+1]) return a[i]=array[0]
-            return a[i]=a[i+1]
+            return a[i]=array[i+1]
+        })
+    }
+    const caesarDecode = (array)=>{
+        return [...array].map((_,i,a)=>{
+            if(!a[i-1]) return a[i] = array[0]
+            return a[i] = array[i-1]
         })
     }
 
     const caesarCipherLowRegister = caesarCipher(arr_en)
     const caesarCipherLowerRegister = caesarCipher(arr_EN)
 
+    const caesarDecodeLowRegister = caesarDecode(arr_en)
+    const caesarDecodeLowerRegister = caesarDecode (arr_EN)
 
     const cipherText = receiveСipherOrDecodeText(originalArray,allIndexLowRegister,allIndexLowerRegister,caesarCipherLowRegister,caesarCipherLowerRegister);
     const cipherArray = TextInArray(cipherText);
-    const decodeText = receiveСipherOrDecodeText(cipherArray,allIndexLowRegister,allIndexLowerRegister,arr_en,arr_EN)
+    const decodeText = receiveСipherOrDecodeText(originalArray,allIndexLowRegister,allIndexLowerRegister,caesarDecodeLowRegister,caesarDecodeLowerRegister)
 
     // console.log(cipherText)
     // console.log(decodeText)
