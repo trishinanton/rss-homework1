@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { Transform } = require('stream');
+const { Transform, Readable } = require('stream');
 const {pipeline} = require ('stream')
 const process = require('process');
 const TextTransformCipher = require('./streams/transform-cipher')
@@ -116,6 +116,21 @@ else {
             process.exit(1)
         }else{
             readStream = fs.createReadStream(inputFile.toString());
+            // let rs = new Readable()
+            // rs.push(inputFile.toString())
+
+            // const data = 'Aqwerty'
+            // class MyReadable extends Readable {
+            //     constructor(data) {
+            //         super();
+            //         this.data = data;
+            //     }
+            //
+            //     _read() {
+            //
+            //     }
+            // }
+            // readStream = new MyReadable (data)
         }
     })
     fs.stat(outputFile.toString(), (err, stats) => {
@@ -123,6 +138,7 @@ else {
             process.stderr.write('Please provide the correct path to the output file')
             process.exit(1)
         }else{
+
             writeStream = fs.createWriteStream(outputFile.toString(),{flags:'a'});
             pipelineFunction(readStream,transformStream,writeStream)
         }
