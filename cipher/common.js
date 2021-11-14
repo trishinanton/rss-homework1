@@ -2,16 +2,11 @@
 const arr_en = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 const arr_EN = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
-// let message = 'This is secret. Message about "_" symbol!'
-// let message = ''
+
 const TextInArray = (text)=>{
     return text.split('')
 }
-// const originalArray = TextInArray(message)
 
-// const findAllIndexInputArray = (inputArray, alphabetInRegister)=>{
-//     return inputArray.map(e=> alphabetInRegister.findIndex(a=> a===e))
-// }
 const receiveСipherText = (originalArray, allIndexLowRegister, allIndexLowerRegister, cipherLowRegister, cipherLowerRegister)=>{
     return originalArray.map((el,i,a)=> {
         if (el === el.toUpperCase()) {
@@ -23,17 +18,12 @@ const receiveСipherText = (originalArray, allIndexLowRegister, allIndexLowerReg
         }
     }).join('')
 }
-// const allIndexLowRegister = findAllIndexInputArray(originalArray, arr_en)
-// const allIndexLowerRegister = findAllIndexInputArray(originalArray, arr_EN)
+
 
 module.exports={
     arr_en,
     arr_EN,
-    // findAllIndexInputArray,
     receiveСipherOrDecodeText: receiveСipherText,
-    // originalArray,
     TextInArray,
-    // allIndexLowRegister,
-    // allIndexLowerRegister,
-    // message
+
 }

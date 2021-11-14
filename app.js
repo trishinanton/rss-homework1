@@ -6,7 +6,8 @@ const TextTransformCipher = require('./streams/transform-cipher')
 const TextTransformDecode = require('./streams/transform-decode')
 const pipelineFunction = require('./pipeline/with-params')
 const pipelineWithoutParametrs = require ('./pipeline/without-params')
-
+const {ReadStream} = require('./streams/custom-readable-stream')
+const {WriteStream} = require ('./streams/custom-writable-stream')
 
 //declaration variables
 let configArr
@@ -22,7 +23,7 @@ const functionRot8Cipher = require ('./cipher/rot-8')
 
 
 const input = process.argv
-console.log(input)
+// console.log(input)
 
 const findParamFromTerminal = ()=>{
     if(input.findIndex( el=> el==='-c' | el === '--config' )){
@@ -60,7 +61,6 @@ const findParamFromTerminal = ()=>{
                 }
             })
         } else{
-            // configArr = null
             process.stderr.write(`Please,enter param '-c' or '--config'`)
             process.exit(1)
         }
@@ -84,7 +84,6 @@ const findParamFromTerminal = ()=>{
 findParamFromTerminal()
 
 const validationParamFromTerminal = ()=>{
-    //--------------------------------//
     if (input.filter(el=>el === '-c' | el === '--config').length>1){
         process.stderr.write(`Please,enter one param '-c' or '--config'`)
         process.exit(1)
@@ -97,15 +96,13 @@ const validationParamFromTerminal = ()=>{
         process.stderr.write(`Please,enter one param '-o' or '--output'`)
         process.exit(1)
     }
-//---------------------------------------//
 }
 validationParamFromTerminal()
 
 
-
-console.log(inputFile)
-console.log(outputFile)
-console.log(configArr)
+// console.log(inputFile)
+// console.log(outputFile)
+// console.log(configArr)
 
 
 if (!inputFile && !outputFile) pipelineWithoutParametrs(transformStream)
@@ -115,22 +112,7 @@ else {
             process.stderr.write('Please provide the correct path to the input file')
             process.exit(1)
         }else{
-            readStream = fs.createReadStream(inputFile.toString());
-            // let rs = new Readable()
-            // rs.push(inputFile.toString())
-
-            // const data = 'Aqwerty'
-            // class MyReadable extends Readable {
-            //     constructor(data) {
-            //         super();
-            //         this.data = data;
-            //     }
-            //
-            //     _read() {
-            //
-            //     }
-            // }
-            // readStream = new MyReadable (data)
+            // readStream = fs.createReadStream(inputFile.toString());
         }
     })
     fs.stat(outputFile.toString(), (err, stats) => {
@@ -139,8 +121,10 @@ else {
             process.exit(1)
         }else{
 
-            writeStream = fs.createWriteStream(outputFile.toString(),{flags:'a'});
-            pipelineFunction(readStream,transformStream,writeStream)
+            // writeStream = fs.createWriteStream(outputFile.toString(),{flags:'a'});
+            pipelineFunction(new ReadStream(inputFile.toString()),
+                transformStream,
+                new WriteStream(outputFile.toString(),'a'))
         }
     })
 

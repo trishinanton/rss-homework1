@@ -9,7 +9,7 @@ const pipelineFunction = (readStream,transformStream,writeStream)=>{
             if (error){
 
             }else{
-                console.log(transformStream.length)
+                // console.log(transformStream.length)
                 console.log('finished')
             }
         }

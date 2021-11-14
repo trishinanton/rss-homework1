@@ -1,23 +1,19 @@
 const {
     arr_en,arr_EN,
-    findAllIndexInputArray,
     receiveСipherOrDecodeText,
-    TextInArray,
-    allIndexLowRegister,
-    allIndexLowerRegister,
-    originalArray
+    TextInArray
 } = require('./common')
 
 const functionAtbashCipher = (message, cipher)=>{
     const originalArray = TextInArray(message)
 
-    //
+
     const findAllIndexInputArray = (inputArray, alphabetInRegister)=>{
         return inputArray.map(e=> alphabetInRegister.findIndex(a=> a===e))
     }
     const allIndexLowRegister = findAllIndexInputArray(originalArray, arr_en)
     const allIndexLowerRegister = findAllIndexInputArray(originalArray, arr_EN)
-    //
+
 
     const atbashCipher = (array)=>{
         return [...array].reverse()

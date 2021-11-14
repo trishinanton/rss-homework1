@@ -1,23 +1,17 @@
 const {
     arr_en,arr_EN,
-    findAllIndexInputArray,
     receiveСipherOrDecodeText,
-    TextInArray,
-    allIndexLowRegister,
-    allIndexLowerRegister,
-    originalArray
+    TextInArray
 } = require('./common')
 
 const functionRot8Cipher = (message, cipher) =>{
     const originalArray = TextInArray(message)
 
-    //
     const findAllIndexInputArray = (inputArray, alphabetInRegister)=>{
         return inputArray.map(e=> alphabetInRegister.findIndex(a=> a===e))
     }
     const allIndexLowRegister = findAllIndexInputArray(originalArray, arr_en)
     const allIndexLowerRegister = findAllIndexInputArray(originalArray, arr_EN)
-    //
 
     const rot8Cipher = (array)=>{
         const countSymbolInArr = array.length-1
@@ -41,11 +35,8 @@ const functionRot8Cipher = (message, cipher) =>{
 
 
     const cipherText = receiveСipherOrDecodeText(originalArray,allIndexLowRegister,allIndexLowerRegister,rot8CipherLowRegister,rot8CipherLowerRegister);
-    const cipherArray = TextInArray(cipherText);
     const decodeText = receiveСipherOrDecodeText(originalArray,allIndexLowRegister,allIndexLowerRegister,rot8DecodeLowRegister,rot8DecodeLowerRegister)
 
-    // console.log(cipherText)
-    // console.log(decodeText)
 
     if(cipher) return cipherText
     else return decodeText
