@@ -15,4 +15,6 @@ class TextTransformCipher extends Transform {
         }
     }
 }
+
+
 module.exports = TextTransformCipher

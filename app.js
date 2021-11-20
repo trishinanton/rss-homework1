@@ -8,6 +8,8 @@ const pipelineFunction = require('./pipeline/with-params')
 const pipelineWithoutParametrs = require ('./pipeline/without-params')
 const {ReadStream} = require('./streams/custom-readable-stream')
 const {WriteStream} = require ('./streams/custom-writable-stream')
+const validationParamFromTerminal = require('./validationParam/validationParamFromTerminal')
+const CheckInputFile = require('./checkFile/checkInputFile')
 
 //declaration variables
 let configArr
@@ -25,7 +27,7 @@ const functionRot8Cipher = require ('./cipher/rot-8')
 const input = process.argv
 // console.log(input)
 
-const findParamFromTerminal = ()=>{
+const findParamFromTerminal = (input)=>{
     if(input.findIndex( el=> el==='-c' | el === '--config' )){
         const index = input.findIndex( el=> el==='-c' | el === '--config' )
         if(index !== -1) {
@@ -60,12 +62,14 @@ const findParamFromTerminal = ()=>{
 
                 }
             })
-        } else{
+        }
+    else{
             process.stderr.write(`Please,enter param '-c' or '--config'`)
             process.exit(1)
         }
 
     }
+    console.log(input)
 
     if(input.findIndex( el=> el==='-i' | el === '--input')){
         const indexInput = input.findIndex( el=> el==='-i' | el === '--input' )
@@ -81,23 +85,9 @@ const findParamFromTerminal = ()=>{
 
     }
 }
-findParamFromTerminal()
+findParamFromTerminal(input)
 
-const validationParamFromTerminal = ()=>{
-    if (input.filter(el=>el === '-c' | el === '--config').length>1){
-        process.stderr.write(`Please,enter one param '-c' or '--config'`)
-        process.exit(1)
-    }
-    if (input.filter(el=>el === '-i' | el === '--input').length>1){
-        process.stderr.write(`Please,enter one param '-i' or '--input'`)
-        process.exit(1)
-    }
-    if (input.filter(el=>el === '-o' | el === '--output').length>1){
-        process.stderr.write(`Please,enter one param '-o' or '--output'`)
-        process.exit(1)
-    }
-}
-validationParamFromTerminal()
+validationParamFromTerminal(input)
 
 
 // console.log(inputFile)
@@ -105,16 +95,7 @@ validationParamFromTerminal()
 // console.log(configArr)
 
 
-if (!inputFile && !outputFile) pipelineWithoutParametrs(transformStream)
-else {
-    fs.stat(inputFile.toString(), (err, stats) => {
-        if (err) {
-            process.stderr.write('Please provide the correct path to the input file')
-            process.exit(1)
-        }else{
-            // readStream = fs.createReadStream(inputFile.toString());
-        }
-    })
+const CheckOutputFile = (outputFile)=>{
     fs.stat(outputFile.toString(), (err, stats) => {
         if (err) {
             process.stderr.write('Please provide the correct path to the output file')
@@ -127,8 +108,15 @@ else {
                 new WriteStream(outputFile.toString(),'a'))
         }
     })
-
 }
+
+if (!inputFile && !outputFile) pipelineWithoutParametrs(transformStream)
+else {
+    CheckInputFile(inputFile)
+    CheckOutputFile(outputFile)
+}
+
+module.exports={validationParamFromTerminal, findParamFromTerminal}
 
 
 

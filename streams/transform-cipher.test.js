@@ -1,4 +1,5 @@
 const TextTransformCipher = require('./transform-cipher')
+const { Transform } = require('stream');
 
 
 describe('transform stream',()=>{
@@ -26,4 +27,14 @@ describe('transform stream',()=>{
         expect(fn()).toBe('42')
         expect(fn()).toBe('42')
     });
+
+    test('should instance of true',()=>{
+        const someFunc = ()=>{}
+        const obj = new TextTransformCipher(someFunc)
+
+        expect(obj).toBeInstanceOf(TextTransformCipher)
+        expect(obj).toBeInstanceOf(Transform)
+        // expect(obj).toBeInstanceOf(Object)
+    })
+
 })
